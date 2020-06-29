@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use Auth;
+use App\MesUser;
 use App\M001_WorkOrder;
 use App\M002_Line;
 use App\M003_LeadTime;
@@ -14,6 +15,7 @@ use App\M006_Op;
 use App\M007_Part;
 use App\M008_Model;
 use App\M009_Size;
+use App\M012_DefectInfo;
 use Carbon\Carbon;
 
 class ApiController extends Controller
@@ -81,8 +83,7 @@ class ApiController extends Controller
         $bom = M005_Bom::create([
             'bom_components'=>$request->bom_components,
             'bom_parent'=>$request->bom_parent,
-            'create_by'=>$request->create_by,
-            'update_by'=>$request->update_by
+            'create_by'=>$request->user_id,
         ]);
         return response()->json(['id'=>$bom->bom_components]);
     }
@@ -90,7 +91,7 @@ class ApiController extends Controller
         M005_Bom::find($request->id)->update([
             'bom_components'=>$request->bom_components,
             'bom_parent'=>$request->bom_parent,
-            'update_by'=>$request->update_by
+            'update_by'=>$request->user_id
         ]);
         return response('success',200);
     }
@@ -105,7 +106,7 @@ class ApiController extends Controller
             'line_desc'=>$request->line_desc,
             'create_by'=>$request->create_by
         ]);
-        return response()->json(['line_id'=>$line->line_id]);
+        return response()->json(['id'=>$line->line_id]);
     }
     public function editline(Request $request){
         M002_Line::find($request->line_id)->update([
@@ -131,7 +132,6 @@ class ApiController extends Controller
     }
     public function editleadtime(Request $request){
         $leadtime = M003_LeadTime::find($request->id)->update([
-            'component_id'=>$request->component_id,
             'lead_time'=>$request->lead_time,
             'process_time'=>$request->process_time,
             'update_by'=>$request->update_by,
@@ -139,7 +139,7 @@ class ApiController extends Controller
         return response('success',200);
     }
     public function routings(){
-        $data = M004_Routing::all();
+        $data = M004_Routing::orderBy('part_no','ASC')->orderBy('operation_id','ASC')->get();
         return response()->json($data);
     }
     public function addrouting(Request $request){
@@ -256,27 +256,32 @@ class ApiController extends Controller
         $style = '';
         $part = '';
         $assy_date = '';
+        $data = DB::table('mes_m_prod_plan')->where('status','R')->where('o_qty','>',DB::raw('p_qty+d_qty'));
         if(isset($request->model)){
             if($request->model!=''){
                 $model = " and model='".$request->model."'";
+                $data = $data->where('model',$request->model);
             }
         }
         if(isset($request->style)){
             if($request->style!=''){
                 $style = " and c_style='".$request->style."'";
+                $data = $data->where('c_style',$request->style);
             }
         }
         if(isset($request->part_no)){
             if($request->part_no!=''){
                 $part = " and part_no='".$request->part_no."'";
+                $data = $data->where('part_no',$request->part_no);
             }
         }
         if(isset($request->assy_date)){
             if($request->assy_date!=''){
                 $assy_date = " and assy_date='".$request->assy_date."'";
+                $data = $data->where('assy_date',$request->assy_date);
             }
         }
-        $data = DB::select("select * from mes_m_prod_plan where status='R' and o_qty > (p_qty+d_qty)".$model.$style.$part.$assy_date);
+        $data = $data->paginate(15);
         return response()->json($data);
     }
     public function processchild(Request $request){
@@ -507,13 +512,219 @@ class ApiController extends Controller
         $data = DB::select("select (select sum(mtt.txn_qty) from mes_m_prod_plan mpp left join mes_transaction mtt on mtt.wo_no = mpp.wo_no and mtt.operation = mpp.e_op where mpp.part_no=mp.part_no) as qty, mp.part_no,mp.part_desc from mes_m_part mp where (mp.part_no = '000' or mp.part_no = '100' or mp.part_no = '500' or mp.part_no = '800')");
         return response()->json($data);
     }
-    public function checkprogram($wo_no){
-        $data = DB::select("SELECT 'NOT YET' AS C_OP, '0' AS OPERATION_ID,''AS PROD_LINE,PP.o_qty - sum(IFNULL(MW.WIP_QTY,0)) - d_qty AS QTY FROM mes_m_prod_plan PP LEFT JOIN  mes_m_wip MW on PP.wo_no = MW.wo_no AND PP.part_no = MW.part_no WHERE PP.wo_no ='".$wo_no."' UNION ALL SELECT MR.C_OP,MR.OPERATION_ID,MW.PROD_LINE, SUM(MW.WIP_QTY)  from mes_m_prod_plan PP, mes_m_routing MR, mes_m_wip MW WHERE PP.wo_no= MW.wo_no and MW.part_no = MR.part_no AND MW.part_no = PP.part_no and PP.wo_no ='".$wo_no."' AND MR.c_op = MW.location GROUP BY MR.C_OP,MR.OPERATION_ID,MW.PROD_LINE ORDER BY OPERATION_ID,PROD_LINE;");
+    public function datawo($assystart,$assyend,$part_no){
+        if($assystart=='null'&&$assyend=='null'&&$part_no=='null'){
+            $data = M001_WorkOrder::paginate(15);
+        }else{
+            if($part_no!='null'){
+                if($assystart!='null'&&$assyend!='null'){
+                    $from = date($assystart);
+                    $to = date($assyend);
+                    $data = M001_WorkOrder::where('part_no',$part_no)->whereBetween('assy_date',[$from,$to])->paginate(15);
+                    // echo json_encode($data);
+                }else{
+                    $data = M001_WorkOrder::where('part_no',$part_no)->paginate(15);
+                }
+            }else{
+                $from = date($assystart);
+                $to = date($assyend);
+                $data = M001_WorkOrder::whereBetween('assy_date',[$from,$to])->paginate(15);
+            }
+        }
         return response()->json($data);
     }
     public function top5defect(){
         $data = DB::select("select md.*,pp.part_no,mdi.defect_desc from mes_defect md left join mes_m_prod_plan pp on pp.wo_no = md.wo_no join mes_defect_info mdi on mdi.defect_id = md.defect_id order by defect_qty desc limit 5");
         return response()->json($data);
+    }
+    public function transactions(Request $request){
+        $assystart = '';
+        $assyend = '';
+        $operation = '';
+        $prod_line = '';
+        $data = DB::table('mes_transaction')->join('mes_m_prod_plan','mes_transaction.wo_no','=','mes_m_prod_plan.wo_no')
+                ->select('mes_transaction.seq','mes_transaction.txn_date','mes_transaction.wo_no','mes_transaction.operation',DB::raw("sum(txn_qty) as txn_qty"),'mes_transaction.prod_line','mes_transaction.create_by','mes_m_prod_plan.part_no','mes_m_prod_plan.model','mes_m_prod_plan.c_style','mes_m_prod_plan.c_size')
+                ->groupBy('mes_transaction.txn_date','mes_transaction.wo_no','mes_transaction.operation','mes_transaction.prod_line');
+        if(isset($request->assystart)){
+            if($request->assystart!=''){
+                $from = date($request->assystart);
+                $to = date($request->assyend);
+                $data = $data->whereBetween('txn_date',[$from,$to]);
+            }
+        }
+        if(isset($request->operation)){
+            if($request->operation!=''){
+                $data = $data->where('operation',$request->operation);
+            }
+        }
+        if(isset($request->prod_line)){
+            if($request->prod_line!=''){
+                $data = $data->where('prod_line',$request->prod_line);
+            }
+        }
+        if(isset($request->part_no)){
+            if($request->part_no!=''){
+                $data = $data->where('part_no',$request->part_no);
+            }
+        }
+        if(isset($request->model)){
+            if($request->model!=''){
+                $data = $data->where('model',$request->model);
+            }
+        }
+        if(isset($request->style)){
+            if($request->style!=''){
+                $data = $data->where('c_style',$request->style);
+            }
+        }
+        if(isset($request->size)){
+            if($request->size!=''){
+                $data = $data->where('c_size',$request->size);
+            }
+        }
+        $data = $data->orderBy('mes_transaction.seq','ASC')->paginate(15);
+        return response()->json($data);
+    }
+    public function defects(Request $request){
+        $assystart = '';
+        $assyend = '';
+        $operation = '';
+        $prod_line = '';
+        $data = DB::table('mes_defect')
+                ->join('mes_m_prod_plan','mes_defect.wo_no','=','mes_m_prod_plan.wo_no')
+                ->leftjoin('mes_defect_info','mes_defect.defect_id','=','mes_defect_info.defect_id')
+                ->select('mes_defect.seq','mes_defect.defect_date','mes_defect.wo_no','mes_defect.operation',DB::raw("sum(defect_qty) as defect_qty"),'mes_defect.prod_line','mes_defect.create_by','mes_m_prod_plan.part_no','mes_m_prod_plan.model','mes_m_prod_plan.c_style','mes_m_prod_plan.c_size','mes_defect_info.defect_desc')
+                ->groupBy('mes_defect.defect_date','mes_defect.wo_no','mes_defect.operation','mes_defect.prod_line');
+        if(isset($request->assystart)){
+            if($request->assystart!=''){
+                $from = date($request->assystart);
+                $to = date($request->assyend);
+                $data = $data->whereBetween('defect_date',[$from,$to]);
+            }
+        }
+        if(isset($request->operation)){
+            if($request->operation!=''){
+                $data = $data->where('operation',$request->operation);
+            }
+        }
+        if(isset($request->prod_line)){
+            if($request->prod_line!=''){
+                $data = $data->where('prod_line',$request->prod_line);
+            }
+        }
+        if(isset($request->part_no)){
+            if($request->part_no!=''){
+                $data = $data->where('part_no',$request->part_no);
+            }
+        }
+        if(isset($request->model)){
+            if($request->model!=''){
+                $data = $data->where('model',$request->model);
+            }
+        }
+        if(isset($request->style)){
+            if($request->style!=''){
+                $data = $data->where('c_style',$request->style);
+            }
+        }
+        if(isset($request->size)){
+            if($request->size!=''){
+                $data = $data->where('c_size',$request->size);
+            }
+        }
+        $data = $data->orderBy('mes_defect.seq','ASC')->paginate(15);
+        return response()->json($data);
+    }
+    public function wipinfo(Request $request){
+        $data = DB::table('mes_m_wip')
+                ->join('mes_m_prod_plan','mes_m_wip.wo_no','=','mes_m_prod_plan.wo_no')
+                ->select('mes_m_wip.*','mes_m_prod_plan.model','mes_m_prod_plan.c_style','mes_m_prod_plan.c_size')->where("wip_qty",'>','0');
+        if(isset($request->operation)){
+            if($request->operation!=''){
+                $data = $data->where('location',$request->operation);
+            }
+        }
+        if(isset($request->prod_line)){
+            if($request->prod_line!=''){
+                $data = $data->where('mes_m_wip.prod_line',$request->prod_line);
+            }
+        }
+        if(isset($request->part_no)){
+            if($request->part_no!=''){
+                $data = $data->where('mes_m_wip.part_no',$request->part_no);
+            }
+        }
+        if(isset($request->model)){
+            if($request->model!=''){
+                $data = $data->where('model',$request->model);
+            }
+        }
+        if(isset($request->style)){
+            if($request->style!=''){
+                $data = $data->where('c_style',$request->style);
+            }
+        }
+        if(isset($request->size)){
+            if($request->size!=''){
+                $data = $data->where('c_size',$request->size);
+            }
+        }
+        $data = $data->orderBy('mes_m_wip.seq','ASC')->paginate(15);
+        return response()->json($data);
+    }
+    public function wipinfo2(Request $request){
+        $data = DB::table('mes_m_wip')
+                ->join('mes_m_prod_plan','mes_m_wip.wo_no','=','mes_m_prod_plan.wo_no')
+                ->leftjoin('mes_m_bom','mes_m_bom.bom_components','=',DB::raw('CONCAT(mes_m_prod_plan.c_style,"-",mes_m_prod_plan.c_size,"-",mes_m_prod_plan.part_no)'))
+                ->select('mes_m_wip.*','mes_m_prod_plan.order_no','mes_m_prod_plan.model','mes_m_prod_plan.c_style','mes_m_prod_plan.c_size')->where('wip_qty','>','0');
+        if(isset($request->part_no)){
+            if($request->part_no!=''){
+                $data = $data->where('mes_m_bom.bom_parent','like','%'.$request->part_no);
+            }
+        }
+        if(isset($request->model)){
+            if($request->model!=''){
+                $data = $data->where('model',$request->model);
+            }
+        }
+        if(isset($request->style)){
+            if($request->style!=''){
+                $data = $data->where('c_style',$request->style);
+            }
+        }
+        if(isset($request->size)){
+            if($request->size!=''){
+                $data = $data->where('c_size',$request->size);
+            }
+        }
+        $data = $data->orderBy('mes_m_wip.seq','ASC')->paginate(15);
+        return response()->json($data);
+    }
+    public function getDataUser($id){
+        $data = MesUser::where('emp_id',$id)->first();
+        return response()->json($data);
+    }
+    public function defectinfos(){
+        $data = M012_DefectInfo::all();
+        return response()->json($data);
+    }
+    public function adddefectinfo(Request $request){
+        $defect = M012_DefectInfo::create([
+            'part_no'=>$request->part_no,
+            'c_op'=>$request->c_op,
+            'defect_desc'=>$request->defect_desc,
+            'create_by'=>$request->create_by,
+        ]);
+        return response()->json(['id'=>$defect->defect_id]);
+    }
+    public function editdefectinfo(Request $request){
+        M012_DefectInfo::find($request->defect_id)->update([
+            'part_no'=>$request->part_no,
+            'c_op'=>$request->c_op,
+            'defect_desc'=>$request->defect_desc,
+            'update_by'=>$request->update_by,
+        ]);
+        return response('success',200);
     }
 
 }

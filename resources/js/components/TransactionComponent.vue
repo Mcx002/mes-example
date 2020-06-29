@@ -1,190 +1,198 @@
 <template>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    Data {{ data.title }}
-                </div>
-                <div class="card-body" style="overflow-x:scroll">
-                    <div class="loading" v-show="loading"><div class="loading-wrap"><i class="fa fa-spinner spinner-loading mr-1"></i> Loading</div></div>
-                    <div class="form-group">
-                        <div id="modalComponent" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title">{{ editstat?'Edit':'Create' }} {{ data.title }}</h4>
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                    </div>
-                                    <form class="form-material" @submit.prevent="actData">
-                                        <div class="modal-body">
-                                            <div class="loading" v-show="loadingform"><div class="loading-wrap"><i class="fa fa-spinner spinner-loading mr-1"></i> Loading</div></div>
-                                            <!--<div class="form-group">
-                                                <label for="part-no" class="control-label">Part No:</label>
-                                                <select required class="form-control" id="part-no" v-model="form.part_no">
-                                                    <option v-for="item in parts" :value="item.part_no">{{item.part_no}}</option>
-                                                </select>
-                                            </div>-->
-                                            <div class="form-group" v-for="item in data.form" v-show="item.type!='none'">
-                                                <label :for="item.id" class="control-label">{{ item.title }}:</label>
-                                                <input :type="item.type" class="form-control" v-if="item.type=='text'||item.type=='dateTime'||item.type=='number'" :id="item.id" :name="item.id" v-model="form[item.id]">
-                                                <select required class="form-control" :id="item.id" :name="item.id" v-model="form[item.id]" v-else-if="item.type=='select'">
-                                                    <option v-for="select in item.selection" :value="select.id">{{select.title}}</option>
-                                                </select>
-                                                <input disabled type="text" class="form-control is-invalid" v-else-if="item.type=='selectnull'" :id="item.id" value="All Data Routing were registered - Please insert the new one">
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-                                            <button type="submit" :class="[editstat?'btn-danger':'btn-primary']" class="btn waves-effect waves-light">{{ editstat?'Save Changes':'Create' }}</button>
-                                        </div>
-                                    </form>
+    <div class="card-body" style="overflow-x:scroll">
+        <div class="loading" v-show="loading"><div class="loading-wrap"><i class="fa fa-spinner spinner-loading mr-1"></i> Loading</div></div>
+        <div class="">
+            <div id="modalComponent" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">{{ editstat?'Edit':'Create' }} {{ data.title }}</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                        <form class="form-material" @submit.prevent="actData">
+                            <div class="modal-body">
+                                <div class="loading" v-show="loadingform"><div class="loading-wrap"><i class="fa fa-spinner spinner-loading mr-1"></i> Loading</div></div>
+                                <!--<div class="form-group">
+                                    <label for="part-no" class="control-label">Part No:</label>
+                                    <select required class="form-control" id="part-no" v-model="form.part_no">
+                                        <option v-for="item in parts" :value="item.part_no">{{item.part_no}}</option>
+                                    </select>
+                                </div>-->
+                                <div class="form-group" v-for="item in data.form" v-show="item.type!='none'">
+                                    <label :for="item.id" class="control-label">{{ item.title }}:</label>
+                                    <input :type="item.type" class="form-control" v-if="item.type=='text'||item.type=='dateTime'||item.type=='number'" :id="item.id" :name="item.id" v-model="form[item.id]">
+                                    <select required class="form-control" :id="item.id" :name="item.id" v-model="form[item.id]" v-else-if="item.type=='select'">
+                                        <option v-for="select in item.selection" :value="select.id">{{select.title}}</option>
+                                    </select>
+                                    <input disabled type="text" class="form-control is-invalid" v-else-if="item.type=='selectnull'" :id="item.id" value="All Data Routing were registered - Please insert the new one">
                                 </div>
                             </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                                <button type="submit" :class="[editstat?'btn-danger':'btn-primary']" class="btn waves-effect waves-light">{{ editstat?'Save Changes':'Create' }}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="childPartComponent" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content" v-if="!parentstat">
+                        <div class="modal-header">
+                            <h4 class="modal-title">{{loadingchildform?'':'Proses Child'}} Component</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                        <form class="form-material" @submit.prevent="actDataChild">
+                            <div class="modal-body">
+                                <div class="loading" v-show="loadingchildform||fistloadchildform"><div class="loading-wrap"><i class="fa fa-spinner spinner-loading mr-1"></i> Loading</div></div>
+                                <!--<div class="form-group">
+                                    <label for="part-no" class="control-label">Part No:</label>
+                                    <select required class="form-control" id="part-no" v-model="form.part_no">
+                                        <option v-for="item in parts" :value="item.part_no">{{item.part_no}}</option>
+                                    </select>
+                                </div>-->
+                                
+                                <div class="row" v-for="(form,f) in childFormData" v-show="!fistloadchildform">
+                                    <div class="col" v-for="(item,i) in form" v-show="item.type!='none'">
+                                        <div class="form-group" v-show="!(item.type=='select'&&item.selection.length==0)">
+                                            <label :for="item.id+f" class="control-label">{{ item.title }}:</label>
+                                            <input :type="item.type" :disabled="item.hasOwnProperty('disabled')" :max="item.hasOwnProperty('max')?item.max:''" :value="item.hasOwnProperty('value')?item.value:''" class="form-control" v-if="item.type=='text'||item.type=='dateTime'||item.type=='number'" :id="item.id+f" :name="item.id+f" v-model="childFormDataForSend[f][item.id]">
+                                            <select :required="(!(item.type=='select'&&item.selection.length==0)&&childFormDataForSend[f][form[i+1].id]!='')||((item.id=='get_process'&&item.selection.length!=0)&&childFormDataForSend[f][form[i+2].id]!='')" class="form-control" :id="item.id+f" :name="item.id+f" v-model="childFormDataForSend[f][item.id]" v-else-if="item.type=='select'" @change="item.hasOwnProperty('onchange')&&item.onchange?onGetProcessChange($event,f):'';">
+                                                <option v-for="select in item.selection" :value="select.id">{{select.id}}</option>
+                                            </select>
+                                            <input disabled type="text" class="form-control is-invalid" v-else-if="item.type=='selectnull'" :id="item.id" value="All Data Routing were registered - Please insert the new one">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--<div class="form-group" v-for="item in childFormData.form" v-show="item.type!='none'">
+                                    <label :for="item.id" class="control-label">{{ item.title }}:</label>
+                                    <input :type="item.type" class="form-control" v-if="item.type=='text'||item.type=='dateTime'||item.type=='number'" :id="item.id" :name="item.id" v-model="form[item.id]">
+                                    <select required class="form-control" :id="item.id" :name="item.id" v-model="form[item.id]" v-else-if="item.type=='select'">
+                                        <option v-for="select in item.selection" :value="select.id">{{select.title}}</option>
+                                    </select>
+                                    <input disabled type="text" class="form-control is-invalid" v-else-if="item.type=='selectnull'" :id="item.id" value="All Data Routing were registered - Please insert the new one">
+                                </div>-->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn waves-effect waves-light btn-primary">Execute</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-content" v-else>
+                        <div class="modal-header">
+                            <h4 class="modal-title">{{loadingchildform?'':'Proses Parent'}} Component</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                         </div>
                         
-                        <div id="childPartComponent" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content" v-if="!parentstat">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title">{{loadingchildform?'':'Proses Child'}} Component</h4>
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <form class="form-material" @submit.prevent="actDataChild">
+                            <div class="modal-body">
+                                <div class="loading" v-show="loadingchildform||fistloadchildform"><div class="loading-wrap"><i class="fa fa-spinner spinner-loading mr-1"></i> Loading</div></div>
+                                <!--<div class="form-group">
+                                    <label for="part-no" class="control-label">Part No:</label>
+                                    <select required class="form-control" id="part-no" v-model="form.part_no">
+                                        <option v-for="item in parts" :value="item.part_no">{{item.part_no}}</option>
+                                    </select>
+                                </div>-->
+                                
+                                <div class="row" v-for="(form,f) in childFormData" v-show="!fistloadchildform">
+                                    <div class="col" v-for="(item,i) in form" v-show="item.type!='none'">
+                                        <div class="form-group" v-show="!(item.type=='select'&&item.selection.length==0)">
+                                            <label :for="item.id+f" class="control-label">{{ item.title }}:</label>
+                                            <input :type="item.type" :disabled="item.hasOwnProperty('disabled')" :max="item.hasOwnProperty('max')?item.max:''" :value="item.hasOwnProperty('value')?item.value:''" class="form-control" v-if="item.type=='text'||item.type=='dateTime'||item.type=='number'" :id="item.id+f" :name="item.id+f" v-model="childFormDataForSend[f][item.id]">
+                                            <select :required="(!(item.type=='select'&&item.selection.length==0)&&childFormDataForSend[f][form[i+1].id]!='')||((item.id=='get_process'&&item.selection.length!=0)&&childFormDataForSend[f][form[i+2].id]!='')" class="form-control" :id="item.id+f" :name="item.id+f" v-model="childFormDataForSend[f][item.id]" v-else-if="item.type=='select'" @change="item.hasOwnProperty('onchange')&&item.onchange?onGetProcessChange($event,f):'';">
+                                                <option v-for="select in item.selection" :value="select.id">{{select.id}}</option>
+                                            </select>
+                                            <input disabled type="text" class="form-control is-invalid" v-else-if="item.type=='selectnull'" :id="item.id" value="All Data Routing were registered - Please insert the new one">
+                                        </div>
                                     </div>
-                                    <form class="form-material" @submit.prevent="actDataChild">
-                                        <div class="modal-body">
-                                            <div class="loading" v-show="loadingchildform||fistloadchildform"><div class="loading-wrap"><i class="fa fa-spinner spinner-loading mr-1"></i> Loading</div></div>
-                                            <!--<div class="form-group">
-                                                <label for="part-no" class="control-label">Part No:</label>
-                                                <select required class="form-control" id="part-no" v-model="form.part_no">
-                                                    <option v-for="item in parts" :value="item.part_no">{{item.part_no}}</option>
-                                                </select>
-                                            </div>-->
-                                            
-                                            <div class="row" v-for="(form,f) in childFormData" v-show="!fistloadchildform">
-                                                <div class="col" v-for="(item,i) in form" v-show="item.type!='none'">
-                                                    <div class="form-group" v-show="!(item.type=='select'&&item.selection.length==0)">
-                                                        <label :for="item.id+f" class="control-label">{{ item.title }}:</label>
-                                                        <input :type="item.type" :disabled="item.hasOwnProperty('disabled')" :max="item.hasOwnProperty('max')?item.max:''" :value="item.hasOwnProperty('value')?item.value:''" class="form-control" v-if="item.type=='text'||item.type=='dateTime'||item.type=='number'" :id="item.id+f" :name="item.id+f" v-model="childFormDataForSend[f][item.id]">
-                                                        <select :required="(!(item.type=='select'&&item.selection.length==0)&&childFormDataForSend[f][form[i+1].id]!='')||((item.id=='get_process'&&item.selection.length!=0)&&childFormDataForSend[f][form[i+2].id]!='')" class="form-control" :id="item.id+f" :name="item.id+f" v-model="childFormDataForSend[f][item.id]" v-else-if="item.type=='select'" @change="item.hasOwnProperty('onchange')&&item.onchange?onGetProcessChange($event,f):'';">
-                                                            <option v-for="select in item.selection" :value="select.id">{{select.id}}</option>
-                                                        </select>
-                                                        <input disabled type="text" class="form-control is-invalid" v-else-if="item.type=='selectnull'" :id="item.id" value="All Data Routing were registered - Please insert the new one">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!--<div class="form-group" v-for="item in childFormData.form" v-show="item.type!='none'">
-                                                <label :for="item.id" class="control-label">{{ item.title }}:</label>
-                                                <input :type="item.type" class="form-control" v-if="item.type=='text'||item.type=='dateTime'||item.type=='number'" :id="item.id" :name="item.id" v-model="form[item.id]">
-                                                <select required class="form-control" :id="item.id" :name="item.id" v-model="form[item.id]" v-else-if="item.type=='select'">
-                                                    <option v-for="select in item.selection" :value="select.id">{{select.title}}</option>
-                                                </select>
-                                                <input disabled type="text" class="form-control is-invalid" v-else-if="item.type=='selectnull'" :id="item.id" value="All Data Routing were registered - Please insert the new one">
-                                            </div>-->
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn waves-effect waves-light btn-primary">Execute</button>
-                                        </div>
-                                    </form>
                                 </div>
-                                <div class="modal-content" v-else>
-                                    <div class="modal-header">
-                                        <h4 class="modal-title">{{loadingchildform?'':'Proses Parent'}} Component</h4>
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                    </div>
-                                    
-                                    <form class="form-material" @submit.prevent="actDataChild">
-                                        <div class="modal-body">
-                                            <div class="loading" v-show="loadingchildform||fistloadchildform"><div class="loading-wrap"><i class="fa fa-spinner spinner-loading mr-1"></i> Loading</div></div>
-                                            <!--<div class="form-group">
-                                                <label for="part-no" class="control-label">Part No:</label>
-                                                <select required class="form-control" id="part-no" v-model="form.part_no">
-                                                    <option v-for="item in parts" :value="item.part_no">{{item.part_no}}</option>
-                                                </select>
-                                            </div>-->
-                                            
-                                            <div class="row" v-for="(form,f) in childFormData" v-show="!fistloadchildform">
-                                                <div class="col" v-for="(item,i) in form" v-show="item.type!='none'">
-                                                    <div class="form-group" v-show="!(item.type=='select'&&item.selection.length==0)">
-                                                        <label :for="item.id+f" class="control-label">{{ item.title }}:</label>
-                                                        <input :type="item.type" :disabled="item.hasOwnProperty('disabled')" :max="item.hasOwnProperty('max')?item.max:''" :value="item.hasOwnProperty('value')?item.value:''" class="form-control" v-if="item.type=='text'||item.type=='dateTime'||item.type=='number'" :id="item.id+f" :name="item.id+f" v-model="childFormDataForSend[f][item.id]">
-                                                        <select :required="(!(item.type=='select'&&item.selection.length==0)&&childFormDataForSend[f][form[i+1].id]!='')||((item.id=='get_process'&&item.selection.length!=0)&&childFormDataForSend[f][form[i+2].id]!='')" class="form-control" :id="item.id+f" :name="item.id+f" v-model="childFormDataForSend[f][item.id]" v-else-if="item.type=='select'" @change="item.hasOwnProperty('onchange')&&item.onchange?onGetProcessChange($event,f):'';">
-                                                            <option v-for="select in item.selection" :value="select.id">{{select.id}}</option>
-                                                        </select>
-                                                        <input disabled type="text" class="form-control is-invalid" v-else-if="item.type=='selectnull'" :id="item.id" value="All Data Routing were registered - Please insert the new one">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!--<div class="form-group" v-for="item in childFormData.form" v-show="item.type!='none'">
-                                                <label :for="item.id" class="control-label">{{ item.title }}:</label>
-                                                <input :type="item.type" class="form-control" v-if="item.type=='text'||item.type=='dateTime'||item.type=='number'" :id="item.id" :name="item.id" v-model="form[item.id]">
-                                                <select required class="form-control" :id="item.id" :name="item.id" v-model="form[item.id]" v-else-if="item.type=='select'">
-                                                    <option v-for="select in item.selection" :value="select.id">{{select.title}}</option>
-                                                </select>
-                                                <input disabled type="text" class="form-control is-invalid" v-else-if="item.type=='selectnull'" :id="item.id" value="All Data Routing were registered - Please insert the new one">
-                                            </div>-->
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn waves-effect waves-light btn-primary">Execute</button>
-                                        </div>
-                                    </form>
-                                </div>
+                                <!--<div class="form-group" v-for="item in childFormData.form" v-show="item.type!='none'">
+                                    <label :for="item.id" class="control-label">{{ item.title }}:</label>
+                                    <input :type="item.type" class="form-control" v-if="item.type=='text'||item.type=='dateTime'||item.type=='number'" :id="item.id" :name="item.id" v-model="form[item.id]">
+                                    <select required class="form-control" :id="item.id" :name="item.id" v-model="form[item.id]" v-else-if="item.type=='select'">
+                                        <option v-for="select in item.selection" :value="select.id">{{select.title}}</option>
+                                    </select>
+                                    <input disabled type="text" class="form-control is-invalid" v-else-if="item.type=='selectnull'" :id="item.id" value="All Data Routing were registered - Please insert the new one">
+                                </div>-->
                             </div>
-                        </div>
-                        <span data-toggle="modal" data-target="#modalComponent" class="btn btn-success" @click="addClickButton"><i class="fa fa-plus"></i> Add {{ data.title }}</span>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn waves-effect waves-light btn-primary">Execute</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="model">Model</label>
-                                <select class="form-control" id="model" @change="onModelSelected" v-model="search.model">
-                                    <option v-for="item in models">{{item.model}}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="style">Style</label>
-                                <select class="form-control" :disabled="search.model==''" id="style" @input="getData" v-model="search.style">
-                                    <option v-for="item in styles">{{item.style}}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="part">Part No</label>
-                                <select class="form-control" id="part" @input="getData" v-model="search.part_no">
-                                    <option v-for="item in parts">{{item.part_no}}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="assy_date">Assy Date</label>
-                                <input type="date" id="assy_date" v-model="search.assy_date" @input="getData" class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                   <table class="table hover-table">
-                        <thead>
-                            <th>No.</th>
-                            <th v-for="item in data.table">{{ item.title }}</th>
-                            <th></th>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(item,i) in table" :style="[item[data.table_primary]==highlighted_id?{backgroundColor:'#edf7ff'}:{}]">
-                                <td>{{ i+1 }}</td>
-                                <td v-for="td in data.table">{{ checktype(item,td) }}</td>
-                                <td class="text-align-center"><a @click.prevent="editButtonClick(item)" class="btn btn-primary" style="color:white"><i class="fa fa-pencil"></i> Select</a></td>
-                            </tr>
-                            <tr v-show="table.length==0">
-                                <td :colspan="data.table.length+2"><center>No data uploaded yet</center></td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <button class="btn btn-success w-100 waves-effect waves-light" type="button" @click="getData">Show</button>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <button class="btn btn-success w-100 waves-effect waves-light" type="button" @click="search.model='';search.style='';search.part_no='';search.assy_date=''">Reset</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="model">Model</label>
+                    <select class="form-control" id="model" @change="onModelSelected" v-model="search.model">
+                        <option v-for="item in models">{{item.model}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="style">Style</label>
+                    <select class="form-control" :disabled="search.model==''" id="style" v-model="search.style">
+                        <option v-for="item in styles">{{item.style}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="part">Part No</label>
+                    <select class="form-control" id="part" v-model="search.part_no">
+                        <option v-for="item in parts">{{item.part_no}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="assy_date">Assy Date</label>
+                    <input type="date" id="assy_date" v-model="search.assy_date" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div v-if="showdata">
+            <table class="table hover-table">
+                <thead>
+                    <th>No.</th>
+                    <th v-for="item in data.table">{{ item.title }}</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    <tr v-for="(item,i) in table.data" :style="[item[data.table_primary]==highlighted_id?{backgroundColor:'#edf7ff'}:{}]">
+                        <td>{{ table.from+i }}</td>
+                        <td v-for="td in data.table">{{ checktype(item,td) }}</td>
+                        <td class="text-align-center"><a @click.prevent="editButtonClick(item)" class="btn btn-sm btn-primary" style="color:white"><i class="fa fa-pencil"></i> Select</a></td>
+                    </tr>
+                    <tr v-show="table.data.length==0">
+                        <td :colspan="data.table.length+2"><center>No data uploaded yet</center></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card text-muted text-center mt-5 mb-3" v-else>
+            Please click button show
+        </div>
+        <v-paginator :data="table" @pagination-change-page="getData"></v-paginator>
     </div>
 </template>
 <script>
@@ -201,6 +209,10 @@ export default{
                 geturl:'/wostat',
                 table_primary:'seq',
                 table:[
+                    {
+                        title:'Order No',
+                        id:'order_no'
+                    },
                     {
                         title:'Work Order',
                         id:'wo_no'
@@ -245,7 +257,9 @@ export default{
                 part_no:'',
                 assy_date:''
             },
-            table:[],
+            table:{
+                data:[]
+            },
             form:{},
             datamodels:[],
             models:[],
@@ -263,7 +277,8 @@ export default{
             loadingform:false,
             parentstat:false,
             loadingchildform:false,
-            fistloadchildform:false
+            fistloadchildform:false,
+            showdata:false,
         }
     },
     computed:{
@@ -272,7 +287,7 @@ export default{
         }
     },
     mounted(){
-        this.getData()
+        // this.getData()
         this.getDataModel()
         this.getDataPart()
         this.getDataLine()
@@ -288,12 +303,16 @@ export default{
                 this.form[this.data.created_by.field] = this.userId
             }
         },
-        getData(){
+        getData(page){
+            if(typeof page === 'undefined'){
+                page = 1
+            }
             this.loading = true
-            axios.post(this.data.geturl,this.search)
+            axios.post(this.data.geturl+'?page='+page,this.search)
                 .then(response=>{
                     this.table = response.data
                     this.loading = false
+                    this.showdata = true
                 })
         },
         getDataModel(){
@@ -340,7 +359,7 @@ export default{
             console.log(this.childFormDataForSend)
         },
         onModelSelected(){
-            this.getData()
+            // this.getData()
             this.styles = []
             this.datamodels.forEach((item,i)=>{
                 if(item.model==this.search.model){
@@ -404,14 +423,14 @@ export default{
             this.fistloadchildform = true
                     // console.log(item)
             $("#childPartComponent").modal("show")
-            axios.get('/getBOM/123456-100-05M-'+item.part_no)
+            axios.get('/getBOM/'+item.c_style+'-'+item.c_size+'-'+item.part_no)
                 .then(response=>{
                     if(response.data.length==0){
                         this.parentstat = false
                         this.childGetRoutingPart(item,{type:'child',qty:item.o_qty})
                     }else{
                         axios.post('/getbaseqtyparent',{
-                            bom:'123456-100-05M-'+item.part_no,
+                            bom:item.c_style+'-'+item.c_size+'-'+item.part_no,
                             wo_no:item.wo_no,
                             order_no:item.order_no
                         })
@@ -486,7 +505,7 @@ export default{
                         selection:selection
                     },
                     {
-                        title:'WIP Quantity',
+                        title:'Transaction Quantity',
                         id:'wip_qty',
                         type:'number',
                         max:0
@@ -508,7 +527,7 @@ export default{
                 console.log(wo)
                 axios.post('/countWip',{
                     wo_no:wo.wo_no,
-                    bom_parent:"123456-100-05M-"+wo.part_no,
+                    bom_parent:wo.c_style+'-'+wo.c_size+'-'+wo.part_no,
                     order_no:wo.order_no,
                     type:qty.type
                 }).then(({data})=>{

@@ -43,16 +43,13 @@ class ManagementController extends Controller
     public function defect(){
         return view('management.mng011_defect_transaction');
     }
-    public function assy(){
-        return view('management.assy');
+    public function transaction_info(){
+        return view('management.mng012_transaction_info');
     }
-    public function m_routing(){
-        return view('management.m_routing');
+    public function transaction_defect_info(){
+        return view('management.mng013_transaction_defect_info');
     }
-    public function defectname(){
-        return view('management.defectname');
-    }
-    public function wip(){
-        return view('management.wip');
+    public function wip_info(){
+        return view('management.mng014_wip_info');
     }
 }

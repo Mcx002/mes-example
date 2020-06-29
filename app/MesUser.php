@@ -8,7 +8,7 @@ class MesUser extends Model
 {
     //
     protected $table = 'mes_user';
-    protected $primary_key = 'emp_id';
-    protected $fillable = ['emp_id','name','password','level'];
+    protected $primary_key = 'id';
+    protected $guarded = ['id'];
     public $timestamps = false;
 }

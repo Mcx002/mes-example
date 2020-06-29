@@ -18,6 +18,7 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
+Vue.component('v-paginator',require('laravel-vue-pagination'));
 Vue.component('form-component',require('./components/FormComponent.vue').default);
 Vue.component('work-order-component',require('./components/WorkOrderComponent.vue').default);
 Vue.component('converter-component',require('./components/ConverterComponent.vue').default);
@@ -31,13 +32,17 @@ Vue.component('model-component',require('./components/ModelComponent.vue').defau
 Vue.component('size-component',require('./components/SizeComponent.vue').default);
 Vue.component('transaction-component',require('./components/TransactionComponent.vue').default);
 Vue.component('defect-component',require('./components/DefectComponent.vue').default);
-// Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('dashboard-management-component',require('./components/DashboardManagementComponent.vue').default);
-// Vue.component('process-component',require('./components/ProcessComponent.vue').default);
-// Vue.component('line-component',require('./components/LineComponent.vue').default);
-// Vue.component('prod-plan-component',require('./components/ProdPlanComponent.vue').default);
-// Vue.component('defect-name-component',require('./components/DefectNameComponent.vue').default);
-// Vue.component('wip-component',require('./components/WipComponent.vue').default);
+Vue.component('transaction-info-component',require('./components/TransactionInfo.vue').default);
+Vue.component('transaction-defect-info-component',require('./components/TransactionDefectInfo.vue').default);
+Vue.component('wip-info-component',require('./components/WipInfo.vue').default);
+Vue.component('production-info-component',require('./components/ProductionInfo.vue').default);
+Vue.component('defect-master-component',require('./components/DefectMaster.vue').default);
+Vue.component('toggler-item-component',require('./components/item/TogglerItemComponent.vue').default);
+
+Vue.component('dashboard-admin-component',require('./components/admin/DashboardAdminComponent.vue').default);
+Vue.component('data-user-component',require('./components/admin/UserComponent.vue').default);
+// Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -47,4 +52,7 @@ Vue.component('dashboard-management-component',require('./components/DashboardMa
 
 const app = new Vue({
     el: '#app',
+});
+const aside = new Vue({
+    el: '#aside',
 });

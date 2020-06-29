@@ -22,13 +22,13 @@
                     <div class="row text-center">
                         <div class="col-lg-4 border-right">
                             <div id="sparkline9" class="m-b-10"></div>
-                            <h6>Process Quantity</h6> <b>{{ p_qty }}</b></div>
+                            <h6>Production Quantity</h6> <b>{{ p_qty }}</b></div>
                         <div class="col-lg-4">
                             <div id="sparkline10" class="m-b-10"></div>
                             <h6>Defect Quantity</h6> <b>{{ d_qty }}</b></div>
                         <div class="col-lg-4 border-right">
                             <div id="sparkline8" class="m-b-10"></div>
-                            <h6>Persentage</h6> <b>{{ persentage_qty.toFixed(2) }}%</b></div>
+                            <h6>FTT</h6> <b>{{ persentage_qty.toFixed(2) }}%</b></div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -316,6 +316,10 @@ export default{
                             }
                         }]
                     },
+                    title:{
+                        display:true,
+                        text:'Production by assembling line'
+                    }
                 }
             });
         },

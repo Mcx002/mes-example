@@ -68,5 +68,10 @@ class Kernel extends HttpKernel
         'isproduction' => \App\Http\Middleware\IsProduction::class,
         'isadmin' => \App\Http\Middleware\IsAdmin::class,
         'sessionlogin' => \App\Http\Middleware\SessionLogin::class,
+        'iskrmanagement' => \App\Http\Middleware\IsKrManagement::class,
+        'iskrqualitycontrol' => \App\Http\Middleware\IsKrQualityControl::class,
+        'iskrproduction' => \App\Http\Middleware\IsKrProduction::class,
+        'iskradmin' => \App\Http\Middleware\IsKrAdmin::class,
+        'sessionkrlogin' => \App\Http\Middleware\SessionKrLogin::class,
     ];
 }

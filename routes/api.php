@@ -58,6 +58,10 @@ Route::get('/sizes','ApiController@sizes');
 Route::post('/addsize','ApiController@addsize');
 Route::post('/editsize','ApiController@editsize');
 
+Route::get('/defectinfos','ApiController@defectinfos');
+Route::post('/adddefectinfo','ApiController@adddefectinfo');
+Route::post('/editdefectinfo','ApiController@editdefectinfo');
+
 Route::post('/wostat','ApiController@wostat');
 Route::post('/processchild','ApiController@processchild');
 Route::post('/countWip','ApiController@countWip');
@@ -65,10 +69,26 @@ Route::post('/getprocesschange','ApiController@getprocesschange');
 Route::post('/getbaseqtyparent','ApiController@getbaseqtyparent');
 Route::get('/defectinfo','ApiController@defectinfo');
 Route::post('/getdefectinfo','ApiController@getdefectinfo');
-Route::get('/checkprogram/{wo_no}','ApiController@checkprogram');
+Route::get('/datawo/{assystart}/{assyend}/{part_no}','ApiController@datawo');
 Route::post('/processdefectchild','ApiController@processdefectchild');
+Route::post('/transactions','ApiController@transactions');
+Route::post('/defects','ApiController@defects');
+Route::post('/wipinfo','ApiController@wipinfo');
+Route::post('/wipinfo2','ApiController@wipinfo2');
 
 Route::get('/getDataFullQty','ApiController@getDataFullQty');
 Route::post('/getDataQty','ApiController@getDataQty');
 Route::get('/getDataByPartNo','ApiController@getDataByPartNo');
 Route::get('/top5defect','ApiController@top5defect');
+Route::get('/user/{id}','ApiController@getDataUser');
+
+Route::prefix('/admin')->group(function(){
+    Route::get('/users','AdminApiController@users');
+    Route::post('/adduser','AdminApiController@adduser');
+    Route::post('/edituser','AdminApiController@edituser');
+    Route::get('/deleteuser/{id}','AdminApiController@deleteuser');
+});
+Route::prefix('option')->group(function(){
+    Route::get('/get','AdminApiController@option');
+    Route::get('/setcollapse/{data}','AdminApiController@setcollapse');
+});

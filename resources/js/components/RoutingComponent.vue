@@ -69,18 +69,19 @@ export default{
                     {
                         title:'C Op',
                         id:'c_op',
-                        type:'text'
+                        type:'select',
+                        selection:[]
                     },
                     {
                         title:'Operation ID',
                         id:'operation_id',
-                        type:'select',
-                        selection:[]
+                        type:'text'
                     },
                     {
                         title:'Next Operation ID',
                         id:'next_operation_id',
                         type:'select',
+                        required:false,
                         selection:[]
                     }
                 ]
@@ -99,7 +100,7 @@ export default{
                 .then(response=>{
                     this.data.form[3].selection = []
                     response.data.forEach((item,i)=>{
-                        this.data.form[3].selection.push({'id':item.op_id,'title':item.op_desc})
+                        this.data.form[2].selection.push({'id':item.op_id,'title':item.op_desc})
                         this.data.form[4].selection.push({'id':item.op_id,'title':item.op_desc})
                     })
                 })

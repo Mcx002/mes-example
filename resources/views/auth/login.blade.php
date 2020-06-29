@@ -55,6 +55,14 @@
                                 <button class="btn btn-block btn-lg btn-info btn-rounded" type="submit">Log In</button>
                             </div>
                         </div>
+                        <div class="d-flex pull-right">
+                            <div class="px-2">
+                                <a href="{{ route('login') }}" title="English"><img src="{{ asset('img/united-kingdom.png') }}" alt=""></a>
+                            </div>
+                            <div class="px-2">
+                                <a href="{{ route('kr_login') }}" title="South Korean"><img src="{{ asset('img/south-korea.png') }}" alt=""></a>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
