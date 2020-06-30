@@ -7,7 +7,7 @@ This first shoes mes project that we builded
 Install Composer in your project
 
 ```bash
-Composer install
+composer install
 ```
 
 Install Node in your project
