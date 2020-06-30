@@ -4,7 +4,13 @@ This first shoes mes project that we builded
 
 ## Installation
 
-Install node in your project
+Install Composer in your project
+
+```bash
+Composer install
+```
+
+Install Node in your project
 
 ```bash
 npm install

@@ -53,7 +53,7 @@
             </li>
         </ul>
     </li>
-    <li> <a class="waves-effect waves-dark {{ route('admin_users')==$actual_link?'active':'' }}" href="{{ route('admin_users')==$actual_link?'javascript:void(0)':route('admin_users') }}" aria-expanded="false"><i class="ti ti-user"></i><span class="hide-menu">사용자 관리</span></a>
+    <li> <a class="waves-effect waves-dark {{ route('admin_users')==$actual_link?'active':'' }}" href="{{ route('admin_users')==$actual_link?'javascript:void(0)':route('admin_users') }}" aria-expanded="false"><i class="ti ti-user"></i><span class="hide-menu">Data Users</span></a>
     </li>
     {{-- <li> <a class="waves-effect waves-dark {{ route('management_process')==$actual_link?'active':'' }}" href="{{ route('management_process')==$actual_link?'javascript:void(0)':route('management_process') }}" aria-expanded="false"><i class="ti-agenda"></i><span class="hide-menu">Process</span></a>
     </li>
