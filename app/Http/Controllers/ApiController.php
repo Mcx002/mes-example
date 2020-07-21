@@ -676,7 +676,11 @@ class ApiController extends Controller
         $data = DB::table('mes_m_wip')
                 ->join('mes_m_prod_plan','mes_m_wip.wo_no','=','mes_m_prod_plan.wo_no')
                 ->leftjoin('mes_m_bom','mes_m_bom.bom_components','=',DB::raw('CONCAT(mes_m_prod_plan.c_style,"-",mes_m_prod_plan.c_size,"-",mes_m_prod_plan.part_no)'))
-                ->select('mes_m_wip.*','mes_m_prod_plan.order_no','mes_m_prod_plan.model','mes_m_prod_plan.c_style','mes_m_prod_plan.c_size')->where('wip_qty','>','0');
+                ->select('mes_m_wip.*','mes_m_prod_plan.e_op','mes_m_prod_plan.order_no','mes_m_prod_plan.model','mes_m_prod_plan.c_style','mes_m_prod_plan.c_size')
+                ->whereRaw('mes_m_wip.location = mes_m_prod_plan.e_op')
+                ->groupBy('mes_m_prod_plan.order_no')
+                ->groupBy('mes_m_wip.location')
+                ->where('wip_qty','>','0');
         if(isset($request->part_no)){
             if($request->part_no!=''){
                 $data = $data->where('mes_m_bom.bom_parent','like','%'.$request->part_no);

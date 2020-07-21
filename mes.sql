@@ -26,8 +26,7 @@ CREATE TABLE IF NOT EXISTS `language` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table mes.language: ~1 rows (approximately)
-DELETE FROM `language`;
+-- Dumping data for table mes.language: ~0 rows (approximately)
 /*!40000 ALTER TABLE `language` DISABLE KEYS */;
 INSERT INTO `language` (`id`, `korean`, `english`) VALUES
 	(1, '보여 주다', 'Show');
@@ -48,8 +47,7 @@ CREATE TABLE IF NOT EXISTS `mes_defect` (
   PRIMARY KEY (`seq`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table mes.mes_defect: ~3 rows (approximately)
-DELETE FROM `mes_defect`;
+-- Dumping data for table mes.mes_defect: ~2 rows (approximately)
 /*!40000 ALTER TABLE `mes_defect` DISABLE KEYS */;
 INSERT INTO `mes_defect` (`seq`, `wo_no`, `operation`, `prod_line`, `defect_date`, `input_date`, `defect_id`, `defect_qty`, `create_by`) VALUES
 	(1, 'WONK20052810013', 'NSW', NULL, '2020-06-08', '2020-06-08 15:09:31', '2', 4, 'MANAGEMENT'),
@@ -72,7 +70,6 @@ CREATE TABLE IF NOT EXISTS `mes_defect_info` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table mes.mes_defect_info: ~6 rows (approximately)
-DELETE FROM `mes_defect_info`;
 /*!40000 ALTER TABLE `mes_defect_info` DISABLE KEYS */;
 INSERT INTO `mes_defect_info` (`defect_id`, `part_no`, `c_op`, `defect_desc`, `create_by`, `update_by`, `created_at`, `updated_at`) VALUES
 	(1, '120', 'CPC', 'Over Cutting', 'UU13050617', '', NULL, NULL),
@@ -96,8 +93,7 @@ CREATE TABLE IF NOT EXISTS `mes_m_bom` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table mes.mes_m_bom: ~25 rows (approximately)
-DELETE FROM `mes_m_bom`;
+-- Dumping data for table mes.mes_m_bom: ~20 rows (approximately)
 /*!40000 ALTER TABLE `mes_m_bom` DISABLE KEYS */;
 INSERT INTO `mes_m_bom` (`id`, `bom_components`, `bom_parent`, `create_by`, `update_by`, `created_at`, `updated_at`) VALUES
 	(1, '123456-100-05M-000', NULL, 'UU13050617', 'UU13050617', '2020-05-01 00:00:00', '2020-05-01 00:00:00'),
@@ -141,8 +137,7 @@ CREATE TABLE IF NOT EXISTS `mes_m_lead_time` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table mes.mes_m_lead_time: ~21 rows (approximately)
-DELETE FROM `mes_m_lead_time`;
+-- Dumping data for table mes.mes_m_lead_time: ~18 rows (approximately)
 /*!40000 ALTER TABLE `mes_m_lead_time` DISABLE KEYS */;
 INSERT INTO `mes_m_lead_time` (`id`, `component_id`, `lead_time`, `process_time`, `create_by`, `update_by`, `created_at`, `updated_at`) VALUES
 	(1, '123456-100-05M-000', 0, 1, 'UU13050617', 'UU13050617', NULL, NULL),
@@ -182,8 +177,7 @@ CREATE TABLE IF NOT EXISTS `mes_m_line` (
   PRIMARY KEY (`line_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table mes.mes_m_line: ~12 rows (approximately)
-DELETE FROM `mes_m_line`;
+-- Dumping data for table mes.mes_m_line: ~11 rows (approximately)
 /*!40000 ALTER TABLE `mes_m_line` DISABLE KEYS */;
 INSERT INTO `mes_m_line` (`line_id`, `op_id`, `line_code`, `line_desc`, `create_by`, `update_by`, `created_at`, `updated_at`) VALUES
 	(1, 'ASY', 'ASY01', 'ASSY LINE 01', '', '', NULL, NULL),
@@ -213,8 +207,7 @@ CREATE TABLE IF NOT EXISTS `mes_m_model` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table mes.mes_m_model: ~9 rows (approximately)
-DELETE FROM `mes_m_model`;
+-- Dumping data for table mes.mes_m_model: ~8 rows (approximately)
 /*!40000 ALTER TABLE `mes_m_model` DISABLE KEYS */;
 INSERT INTO `mes_m_model` (`id`, `model`, `style`, `create_by`, `update_by`, `created_at`, `updated_at`) VALUES
 	(1, 'NIKE JORDAN', '123456-100', 'MANAGEMENT', 'MANAGEMENT', '2020-06-02 01:48:42', '2020-06-02 01:50:42'),
@@ -241,8 +234,7 @@ CREATE TABLE IF NOT EXISTS `mes_m_op` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table mes.mes_m_op: ~19 rows (approximately)
-DELETE FROM `mes_m_op`;
+-- Dumping data for table mes.mes_m_op: ~17 rows (approximately)
 /*!40000 ALTER TABLE `mes_m_op` DISABLE KEYS */;
 INSERT INTO `mes_m_op` (`id`, `op_id`, `op_desc`, `create_by`, `update_by`, `created_at`, `updated_at`) VALUES
 	(1, 'AST', 'ASSY SET', '', '', NULL, NULL),
@@ -279,8 +271,7 @@ CREATE TABLE IF NOT EXISTS `mes_m_part` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table mes.mes_m_part: ~11 rows (approximately)
-DELETE FROM `mes_m_part`;
+-- Dumping data for table mes.mes_m_part: ~8 rows (approximately)
 /*!40000 ALTER TABLE `mes_m_part` DISABLE KEYS */;
 INSERT INTO `mes_m_part` (`id`, `part_no`, `part_desc`, `create_by`, `update_by`, `created_at`, `updated_at`) VALUES
 	(1, '000', 'FINISH GOOD', 'UUI13050617', 'UUI13050617', NULL, NULL),
@@ -325,8 +316,7 @@ CREATE TABLE IF NOT EXISTS `mes_m_prod_plan` (
   PRIMARY KEY (`seq`)
 ) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table mes.mes_m_prod_plan: ~61 rows (approximately)
-DELETE FROM `mes_m_prod_plan`;
+-- Dumping data for table mes.mes_m_prod_plan: ~57 rows (approximately)
 /*!40000 ALTER TABLE `mes_m_prod_plan` DISABLE KEYS */;
 INSERT INTO `mes_m_prod_plan` (`seq`, `order_no`, `wo_no`, `d_create`, `d_start`, `d_end`, `model`, `c_style`, `c_size`, `part_no`, `assy_date`, `prod_line`, `wo_type`, `assy_line`, `s_op`, `e_op`, `o_qty`, `p_qty`, `d_qty`, `create_by`, `release_date`, `status`, `remarks`) VALUES
 	(1, 'NK2005281001', 'WONK20052810011', '2020-06-05 15:22:27', '2020-06-11 00:00:00', '2020-06-11 00:00:00', 'NIKE JORDAN', '123456-100', '05M', '000', '2020-06-11', NULL, 'M', 'ASY01', 'ASY', 'GWH', 50, 18, 0, 'MANAGEMENT', '2020-06-05 15:22:27', 'R', NULL),
@@ -407,8 +397,7 @@ CREATE TABLE IF NOT EXISTS `mes_m_routing` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table mes.mes_m_routing: ~26 rows (approximately)
-DELETE FROM `mes_m_routing`;
+-- Dumping data for table mes.mes_m_routing: ~23 rows (approximately)
 /*!40000 ALTER TABLE `mes_m_routing` DISABLE KEYS */;
 INSERT INTO `mes_m_routing` (`id`, `part_no`, `c_op`, `operation_id`, `next_operation_id`, `create_by`, `update_by`, `created_at`, `updated_at`) VALUES
 	(1, '000', 'ASY', '10', 'GWH', 'UU13050617', 'UU13050617', '2020-05-28 00:00:00', '2020-05-28 00:00:00'),
@@ -452,8 +441,7 @@ CREATE TABLE IF NOT EXISTS `mes_m_size_run` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table mes.mes_m_size_run: ~15 rows (approximately)
-DELETE FROM `mes_m_size_run`;
+-- Dumping data for table mes.mes_m_size_run: ~12 rows (approximately)
 /*!40000 ALTER TABLE `mes_m_size_run` DISABLE KEYS */;
 INSERT INTO `mes_m_size_run` (`id`, `size_id`, `desc`, `create_by`, `update_by`, `created_at`, `updated_at`) VALUES
 	(1, '05M', '5.0', 'MANAGEMENT', 'MANAGEMENT', '2020-06-02 02:21:06', '2020-06-02 02:21:41'),
@@ -486,7 +474,6 @@ CREATE TABLE IF NOT EXISTS `mes_m_wip` (
 ) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table mes.mes_m_wip: ~28 rows (approximately)
-DELETE FROM `mes_m_wip`;
 /*!40000 ALTER TABLE `mes_m_wip` DISABLE KEYS */;
 INSERT INTO `mes_m_wip` (`seq`, `wo_no`, `part_no`, `location`, `prod_line`, `wip_qty`) VALUES
 	(1, 'WONK20052810013', '120', 'CPC', 'CPC01', 2),
@@ -533,7 +520,6 @@ CREATE TABLE IF NOT EXISTS `mes_transaction` (
 ) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table mes.mes_transaction: ~45 rows (approximately)
-DELETE FROM `mes_transaction`;
 /*!40000 ALTER TABLE `mes_transaction` DISABLE KEYS */;
 INSERT INTO `mes_transaction` (`seq`, `txn_date`, `wo_no`, `operation`, `txn_qty`, `prod_line`, `create_by`) VALUES
 	(1, '2020-06-08', 'WONK20052810013', 'CPC', 40, 'CPC01', 'MANAGEMENT'),
@@ -595,7 +581,6 @@ CREATE TABLE IF NOT EXISTS `mes_user` (
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table mes.mes_user: ~6 rows (approximately)
-DELETE FROM `mes_user`;
 /*!40000 ALTER TABLE `mes_user` DISABLE KEYS */;
 INSERT INTO `mes_user` (`id`, `emp_id`, `name`, `password`, `level`) VALUES
 	(1, 'ADMIN', 'ADMIN', 'admin123', '4'),
@@ -621,7 +606,6 @@ CREATE TABLE IF NOT EXISTS `mtl_system_item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Dumping data for table mes.mtl_system_item: ~0 rows (approximately)
-DELETE FROM `mtl_system_item`;
 /*!40000 ALTER TABLE `mtl_system_item` DISABLE KEYS */;
 /*!40000 ALTER TABLE `mtl_system_item` ENABLE KEYS */;
 
@@ -634,8 +618,7 @@ CREATE TABLE IF NOT EXISTS `option` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
--- Dumping data for table mes.option: ~1 rows (approximately)
-DELETE FROM `option`;
+-- Dumping data for table mes.option: ~0 rows (approximately)
 /*!40000 ALTER TABLE `option` DISABLE KEYS */;
 INSERT INTO `option` (`id`, `language`, `collapse`) VALUES
 	(1, 'korean', 'Y');
